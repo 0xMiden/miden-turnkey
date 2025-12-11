@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "es2020",
+    "moduleResolution": "node",
+    "lib": ["ES2020", "DOM"],
+    "outDir": "./dist/esm",
+    "declarationDir": "./dist/types",
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "declarationMap": false,
+    "sourceMap": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": false,
+    "noFallthroughCasesInSwitch": true,
+    "strict": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "allowJs": true
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist", "examples", "packages"]
+}
