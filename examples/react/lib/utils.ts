@@ -1,4 +1,11 @@
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 import type { Turnkey } from "./types";
+import { createKey } from "next/dist/shared/lib/router/router";
 
 export const fromTurnkeySig = (sig: { r: string; s: string; v: string }) => {
   // TODO: bug in miden crypto where there is an extra byte in the signature buffer
@@ -33,12 +40,10 @@ export async function fetchUncompressedPublicKey(input: {
   organizationId: string;
 }): Promise<string> {
   const { client, privateKeyId, organizationId } = input;
-
   const keyInfo = await client.getPrivateKey({
     organizationId,
     privateKeyId,
   });
-
   const uncompressedPublicKey = keyInfo.privateKey.publicKey;
   return uncompressedPublicKey;
 }
