@@ -7,6 +7,11 @@ node_modules/
 dist/
 build/
 *.tsbuildinfo
+*.tgz
+
+# Packages
+packages/*/node_modules/
+packages/*/dist/
 
 # Environment variables
 .env
@@ -39,3 +44,6 @@ coverage/
 # Temporary files
 *.tmp
 .cache/
+
+# Next.js
+.next/

@@ -4,7 +4,7 @@
     "module": "es2020",
     "moduleResolution": "node",
     "lib": ["ES2020", "DOM"],
-    "outDir": "./dist/esm",
+    "outDir": "./dist/types",
     "declarationDir": "./dist/types",
     "allowSyntheticDefaultImports": true,
     "declaration": true,
@@ -19,6 +19,6 @@
     "isolatedModules": true,
     "allowJs": true
   },
-  "include": ["**/*.ts"],
-  "exclude": ["node_modules", "dist", "examples", "packages"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "examples", "packages", "scripts"]
 }
