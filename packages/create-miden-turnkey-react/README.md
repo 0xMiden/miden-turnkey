@@ -5,10 +5,6 @@ CLI to scaffold a React + Vite app with Miden and Turnkey wallet integration.
 ## Usage
 
 ```bash
-npm create @miden-sdk/miden-turnkey-react my-app
-# or
-npx @miden-sdk/create-miden-turnkey-react my-app
-# or
 yarn create @miden-sdk/miden-turnkey-react my-app
 ```
 
@@ -17,7 +13,7 @@ yarn create @miden-sdk/miden-turnkey-react my-app
 - `--skip-install`: Skip automatic dependency installation
 
 ```bash
-npm create @miden-sdk/miden-turnkey-react my-app --skip-install
+yarn create @miden-sdk/miden-turnkey-react my-app --skip-install
 ```
 
 ## What's Included
@@ -61,7 +57,7 @@ After creating your project:
 
 4. Start the development server:
    ```bash
-   npm run dev
+   yarn dev
    ```
 
 ## Environment Variables

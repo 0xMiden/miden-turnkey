@@ -5,8 +5,6 @@ React hook for integrating Miden with Turnkey wallet authentication.
 ## Installation
 
 ```bash
-npm install @miden-sdk/miden-turnkey-react
-# or
 yarn add @miden-sdk/miden-turnkey-react
 ```
 
@@ -15,7 +13,7 @@ yarn add @miden-sdk/miden-turnkey-react
 This package requires the following peer dependencies:
 
 ```bash
-npm install @demox-labs/miden-sdk @miden-sdk/miden-turnkey @turnkey/react-wallet-kit react
+yarn add @demox-labs/miden-sdk @miden-sdk/miden-turnkey @turnkey/react-wallet-kit react
 ```
 
 ## Usage

@@ -17,15 +17,15 @@ This monorepo contains the following packages:
 ### Option 1: Scaffold a new project
 
 ```bash
-npm create @miden-sdk/miden-turnkey-react my-app
+yarn create @miden-sdk/miden-turnkey-react my-app
 cd my-app
-npm run dev
+yarn dev
 ```
 
 ### Option 2: Add to an existing React project
 
 ```bash
-npm install @miden-sdk/miden-turnkey @miden-sdk/miden-turnkey-react @demox-labs/miden-sdk @turnkey/react-wallet-kit
+yarn add @miden-sdk/miden-turnkey @miden-sdk/miden-turnkey-react @demox-labs/miden-sdk @turnkey/react-wallet-kit
 ```
 
 ```tsx
@@ -56,7 +56,7 @@ function MidenApp() {
 ### Option 3: Use the core SDK directly
 
 ```bash
-npm install @miden-sdk/miden-turnkey @demox-labs/miden-sdk @turnkey/http
+yarn add @miden-sdk/miden-turnkey @demox-labs/miden-sdk @turnkey/http
 ```
 
 ```typescript
@@ -89,7 +89,7 @@ const { client, accountId } = await createMidenTurnkeyClient(
 ### Core SDK
 
 ```bash
-npm install @miden-sdk/miden-turnkey
+yarn add @miden-sdk/miden-turnkey
 ```
 
 **Peer Dependencies:**
@@ -101,7 +101,7 @@ npm install @miden-sdk/miden-turnkey
 ### React Hook
 
 ```bash
-npm install @miden-sdk/miden-turnkey-react
+yarn add @miden-sdk/miden-turnkey-react
 ```
 
 **Peer Dependencies:**
