@@ -109,11 +109,6 @@ try {
   const envExample = `# Turnkey Configuration
 VITE_TURNKEY_ORGANIZATION_ID=your-organization-id
 VITE_TURNKEY_API_BASE_URL=https://api.turnkey.com
-VITE_TURNKEY_DOMAIN=your-app-domain
-
-# Miden Configuration
-VITE_MIDEN_NODE_URL=https://rpc.miden.io
-VITE_MIDEN_TRANSPORT_URL=https://transport.miden.io
 `;
   writeFileSync(join(projectPath, ".env.example"), envExample);
 } catch (error) {

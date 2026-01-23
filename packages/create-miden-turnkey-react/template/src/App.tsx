@@ -2,6 +2,15 @@ import { TurnkeyProvider } from "@turnkey/react-wallet-kit";
 import { useTurnkeyMiden } from "@miden-sdk/miden-turnkey-react";
 import "@turnkey/react-wallet-kit/styles.css";
 
+// Miden configuration - customize these values for your app
+const midenConfig = {
+  nodeUrl: "https://rpc.miden.io",
+  transportUrl: "https://transport.miden.io",
+  accountSeed: "miden-turnkey-demo",
+  storageMode: "public" as const,
+};
+
+// Turnkey configuration
 const turnkeyConfig = {
   apiBaseUrl: import.meta.env.VITE_TURNKEY_API_BASE_URL || "https://api.turnkey.com",
   defaultOrganizationId: import.meta.env.VITE_TURNKEY_ORGANIZATION_ID || "",
@@ -18,11 +27,11 @@ const turnkeyConfig = {
 
 function MidenDemo() {
   const { client, accountId, turnkey, embeddedWallets } = useTurnkeyMiden(
-    import.meta.env.VITE_MIDEN_NODE_URL || "https://rpc.miden.io",
-    "public",
+    midenConfig.nodeUrl,
+    midenConfig.storageMode,
     {
-      accountSeed: "miden-turnkey-demo",
-      noteTransportUrl: import.meta.env.VITE_MIDEN_TRANSPORT_URL || "https://transport.miden.io",
+      accountSeed: midenConfig.accountSeed,
+      noteTransportUrl: midenConfig.transportUrl,
     }
   );
 

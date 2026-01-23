@@ -55,7 +55,17 @@ After creating your project:
    VITE_TURNKEY_ORGANIZATION_ID=your-organization-id
    ```
 
-4. Start the development server:
+4. (Optional) Customize Miden settings in `src/App.tsx`:
+   ```typescript
+   const midenConfig = {
+     nodeUrl: "https://rpc.miden.io",
+     transportUrl: "https://transport.miden.io",
+     accountSeed: "my-unique-seed",
+     storageMode: "public" as const,
+   };
+   ```
+
+5. Start the development server:
    ```bash
    yarn dev
    ```
@@ -66,8 +76,17 @@ After creating your project:
 |----------|-------------|
 | `VITE_TURNKEY_ORGANIZATION_ID` | Your Turnkey organization ID |
 | `VITE_TURNKEY_API_BASE_URL` | Turnkey API URL (default: https://api.turnkey.com) |
-| `VITE_MIDEN_NODE_URL` | Miden node RPC URL (default: https://rpc.miden.io) |
-| `VITE_MIDEN_TRANSPORT_URL` | Miden transport URL (default: https://transport.miden.io) |
+
+## Miden Configuration
+
+Miden settings are configured directly in `src/App.tsx` for flexibility:
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `nodeUrl` | `https://rpc.miden.io` | Miden node RPC URL |
+| `transportUrl` | `https://transport.miden.io` | Note transport service URL |
+| `accountSeed` | `miden-turnkey-demo` | Seed for deterministic account generation |
+| `storageMode` | `public` | Account storage mode (`public` or `private`) |
 
 ## License
 
