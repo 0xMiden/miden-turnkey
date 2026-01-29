@@ -1,0 +1,31 @@
+{
+  "name": "@miden-sdk/create-miden-turnkey-react",
+  "version": "1.0.0",
+  "description": "CLI to scaffold a React + Vite app with Miden Turnkey integration",
+  "type": "module",
+  "bin": {
+    "create-miden-turnkey-react": "./bin/create-miden-turnkey-react.mjs"
+  },
+  "keywords": [
+    "miden",
+    "turnkey",
+    "react",
+    "vite",
+    "scaffold",
+    "cli"
+  ],
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/0xPolygonMiden/miden-turnkey.git",
+    "directory": "packages/create-miden-turnkey-react"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "bin",
+    "template"
+  ]
+}
