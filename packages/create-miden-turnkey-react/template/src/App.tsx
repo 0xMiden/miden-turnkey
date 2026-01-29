@@ -1,28 +1,22 @@
-import { TurnkeyProvider } from "@turnkey/react-wallet-kit";
+import {
+  TurnkeyProvider,
+  type TurnkeyProviderConfig,
+} from "@turnkey/react-wallet-kit";
 import { useTurnkeyMiden } from "@miden-sdk/miden-turnkey-react";
 import "@turnkey/react-wallet-kit/styles.css";
 
 // Miden configuration - customize these values for your app
 const midenConfig = {
-  nodeUrl: "https://rpc.miden.io",
+  nodeUrl: "https://rpc.testnet.miden.io",
   transportUrl: "https://transport.miden.io",
   accountSeed: "miden-turnkey-demo",
   storageMode: "public" as const,
 };
 
 // Turnkey configuration
-const turnkeyConfig = {
-  apiBaseUrl: import.meta.env.VITE_TURNKEY_API_BASE_URL || "https://api.turnkey.com",
-  defaultOrganizationId: import.meta.env.VITE_TURNKEY_ORGANIZATION_ID || "",
-  authConfig: {
-    emailEnabled: true,
-    passkeyEnabled: true,
-  },
-  wallet: {
-    embedded: {
-      createOnLogin: true,
-    },
-  },
+const turnkeyConfig: TurnkeyProviderConfig = {
+  organizationId: import.meta.env.VITE_TURNKEY_ORGANIZATION_ID!,
+  authProxyConfigId: import.meta.env.VITE_AUTH_PROXY_CONFIG_ID!,
 };
 
 function MidenDemo() {
@@ -32,10 +26,10 @@ function MidenDemo() {
     {
       accountSeed: midenConfig.accountSeed,
       noteTransportUrl: midenConfig.transportUrl,
-    }
+    },
   );
 
-  const { user, handleLogin } = turnkey;
+  const { user, handleLogin, createWallet } = turnkey;
 
   if (!user) {
     return (
@@ -66,8 +60,12 @@ function MidenDemo() {
 
       <section style={{ marginBottom: "2rem" }}>
         <h2>User Info</h2>
-        <p><strong>Email:</strong> {user.email || "N/A"}</p>
-        <p><strong>User ID:</strong> {user.id}</p>
+        <p>
+          <strong>Email:</strong> {user.userEmail || "N/A"}
+        </p>
+        <p>
+          <strong>User ID:</strong> {user.userId}
+        </p>
       </section>
 
       <section style={{ marginBottom: "2rem" }}>
@@ -76,12 +74,26 @@ function MidenDemo() {
           <ul>
             {embeddedWallets.map((wallet) => (
               <li key={wallet.walletId}>
-                {wallet.walletName || wallet.walletId}
+                {wallet.walletName || wallet.walletId}{" "}
+                {wallet.accounts[0].address}
               </li>
             ))}
           </ul>
         ) : (
-          <p>No wallets found</p>
+          <>
+            <p>No wallets found</p>
+            <button
+              onClick={async () => {
+                await createWallet({
+                  walletName: "My Miden Wallet",
+                  accounts: ["ADDRESS_FORMAT_ETHEREUM"],
+                });
+              }}
+            >
+              {" "}
+              Create Wallet
+            </button>
+          </>
         )}
       </section>
 
@@ -90,7 +102,9 @@ function MidenDemo() {
         {client ? (
           <div>
             <p style={{ color: "green" }}>Client initialized</p>
-            <p><strong>Account ID:</strong> {accountId}</p>
+            <p>
+              <strong>Account ID:</strong> {accountId}
+            </p>
           </div>
         ) : (
           <p>Loading Miden client...</p>

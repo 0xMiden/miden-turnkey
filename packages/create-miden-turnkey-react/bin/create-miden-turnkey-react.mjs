@@ -108,7 +108,7 @@ console.log("\n[5/6] Creating environment template...");
 try {
   const envExample = `# Turnkey Configuration
 VITE_TURNKEY_ORGANIZATION_ID=your-organization-id
-VITE_TURNKEY_API_BASE_URL=https://api.turnkey.com
+VITE_AUTH_PROXY_CONFIG_ID=your-auth-proxy-config-id
 `;
   writeFileSync(join(projectPath, ".env.example"), envExample);
 } catch (error) {
