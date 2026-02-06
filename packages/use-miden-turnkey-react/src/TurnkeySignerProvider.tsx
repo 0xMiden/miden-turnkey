@@ -7,32 +7,26 @@ import {
   useContext,
   type ReactNode,
 } from "react";
-import type { TurnkeyBrowserClient } from "@turnkey/sdk-browser";
+import { TurnkeyBrowserClient, type TurnkeySDKClientConfig } from "@turnkey/sdk-browser";
 import type { WalletAccount } from "@turnkey/core";
 import { SignerContext, type SignerContextValue } from "./signer-types";
 import { evmPkToCommitment, fromTurnkeySig } from "@miden-sdk/miden-turnkey";
-import type { Turnkey, TConfig } from "@miden-sdk/miden-turnkey";
-import { isHttpClient } from "@turnkey/http";
 
 // TURNKEY SIGNER PROVIDER
 // ================================================================================================
 
 export interface TurnkeySignerProviderProps {
   children: ReactNode;
-  /** Turnkey client instance (TurnkeyBrowserClient or TurnkeyClient) */
-  client: Turnkey;
-  /** Turnkey organization ID */
-  organizationId: string;
+  /** Turnkey SDK client configuration (apiBaseUrl, organizationId, stamper, etc.) */
+  config: TurnkeySDKClientConfig;
 }
 
 /**
  * Turnkey-specific extras exposed via useTurnkeySigner hook.
  */
 export interface TurnkeySignerExtras {
-  /** Turnkey client instance */
-  client: Turnkey;
-  /** Turnkey organization ID */
-  organizationId: string;
+  /** Turnkey browser client instance */
+  client: TurnkeyBrowserClient;
   /** Connected account (null if not connected) */
   account: WalletAccount | null;
 }
@@ -46,51 +40,25 @@ const TurnkeySignerExtrasContext = createContext<TurnkeySignerExtras | null>(
  */
 async function signWithTurnkey(
   messageHex: string,
-  config: TConfig
+  client: TurnkeyBrowserClient,
+  account: WalletAccount
 ): Promise<{ r: string; s: string; v: string }> {
-  const { client, organizationId, account } = config;
-
-  if (isHttpClient(client)) {
-    const { activity } = await client.signRawPayload({
-      type: "ACTIVITY_TYPE_SIGN_RAW_PAYLOAD_V2",
-      organizationId: organizationId,
-      timestampMs: String(Date.now()),
-      parameters: {
-        signWith: account.address,
-        payload: messageHex,
-        encoding: "PAYLOAD_ENCODING_HEXADECIMAL",
-        hashFunction: "HASH_FUNCTION_KECCAK256",
-      },
-    });
-
-    if (activity.status !== "ACTIVITY_STATUS_COMPLETED") {
-      throw new Error(`Invalid activity status: ${activity.status}`);
-    }
-
-    const result = activity?.result?.signRawPayloadResult;
-    if (!result) {
-      throw new Error("No signature result from Turnkey");
-    }
-    return result;
-  } else {
-    const result = await (client as TurnkeyBrowserClient).signRawPayload({
-      signWith: account.address,
-      payload: messageHex,
-      encoding: "PAYLOAD_ENCODING_HEXADECIMAL",
-      hashFunction: "HASH_FUNCTION_KECCAK256",
-    });
-    return result;
-  }
+  const result = await client.signRawPayload({
+    signWith: account.address,
+    payload: messageHex,
+    encoding: "PAYLOAD_ENCODING_HEXADECIMAL",
+    hashFunction: "HASH_FUNCTION_KECCAK256",
+  });
+  return result;
 }
 
 /**
  * TurnkeySignerProvider wraps MidenProvider to enable Turnkey wallet signing.
+ * Constructs a TurnkeyBrowserClient internally from the provided config.
  *
  * @example
  * ```tsx
- * const turnkeyClient = new TurnkeyBrowserClient({ ... });
- *
- * <TurnkeySignerProvider client={turnkeyClient} organizationId="your-org-id">
+ * <TurnkeySignerProvider config={{ apiBaseUrl: "https://api.turnkey.com", organizationId: "your-org-id", stamper }}>
  *   <MidenProvider config={{ rpcUrl: "testnet" }}>
  *     <App />
  *   </MidenProvider>
@@ -99,9 +67,13 @@ async function signWithTurnkey(
  */
 export function TurnkeySignerProvider({
   children,
-  client,
-  organizationId,
+  config,
 }: TurnkeySignerProviderProps) {
+  const client = useMemo(
+    () => new TurnkeyBrowserClient(config),
+    [config.apiBaseUrl, config.organizationId]
+  );
+
   const [account, setAccount] = useState<WalletAccount | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
@@ -167,11 +139,7 @@ export function TurnkeySignerProvider({
           const inputs = SigningInputs.deserialize(signingInputs);
           const messageHex = inputs.toCommitment().toHex();
 
-          const sig = await signWithTurnkey(messageHex, {
-            client,
-            organizationId,
-            account,
-          });
+          const sig = await signWithTurnkey(messageHex, client, account);
           return fromTurnkeySig(sig);
         };
 
@@ -214,17 +182,16 @@ export function TurnkeySignerProvider({
     return () => {
       cancelled = true;
     };
-  }, [isConnected, account, client, organizationId, connect, disconnect]);
+  }, [isConnected, account, client, connect, disconnect]);
 
   // Extended extras context with setAccount
   const extrasValue = useMemo(
     () => ({
       client,
-      organizationId,
       account,
       setAccount: setConnectedAccount,
     }),
-    [client, organizationId, account, setConnectedAccount]
+    [client, account, setConnectedAccount]
   );
 
   return (
@@ -238,11 +205,11 @@ export function TurnkeySignerProvider({
 
 /**
  * Hook for Turnkey-specific extras beyond the unified useSigner interface.
- * Use this to access the Turnkey client, organization, or set the account.
+ * Use this to access the Turnkey client or set the account.
  *
  * @example
  * ```tsx
- * const { client, organizationId, account, setAccount, isConnected } = useTurnkeySigner();
+ * const { client, account, setAccount, isConnected } = useTurnkeySigner();
  *
  * // After Turnkey auth flow completes:
  * setAccount(walletAccount);

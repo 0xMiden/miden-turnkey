@@ -16,7 +16,6 @@ export default defineConfig({
     "@demox-labs/miden-sdk",
     "@miden-sdk/miden-turnkey",
     "@turnkey/core",
-    "@turnkey/http",
     "@turnkey/react-wallet-kit",
     "@turnkey/sdk-browser",
   ],

@@ -28,9 +28,6 @@ const loadTurnkeySignerProvider = (mocks = {}) => {
     if (request.startsWith('@turnkey/sdk-browser')) {
       return mocks['@turnkey/sdk-browser'];
     }
-    if (request.startsWith('@turnkey/http')) {
-      return mocks['@turnkey/http'];
-    }
     if (request.startsWith('@turnkey/core')) {
       return mocks['@turnkey/core'];
     }
@@ -96,9 +93,6 @@ const createMocks = (state = {}) => {
         return mockTurnkeyClient;
       },
     },
-    '@turnkey/http': {
-      isHttpClient: (client) => false,
-    },
     '@turnkey/core': {},
     '@miden-sdk/react': {
       SignerContext: SignerContextReact,
@@ -134,6 +128,13 @@ const createMocks = (state = {}) => {
   };
 };
 
+/** Default config prop for tests */
+const defaultConfig = {
+  apiBaseUrl: 'https://api.turnkey.com',
+  organizationId: 'test-org-id',
+  stamper: { stamp: async () => ({ stampHeaderName: 'x', stampHeaderValue: 'y' }) },
+};
+
 /**
  * Renders a hook within TurnkeySignerProvider context.
  */
@@ -151,8 +152,7 @@ const renderHookInProvider = async (
   };
 
   const defaultProps = {
-    client: mocks.mockTurnkeyClient,
-    organizationId: 'test-org-id',
+    config: defaultConfig,
     children: React.createElement(Harness),
     ...providerProps,
   };
@@ -186,8 +186,7 @@ const renderHookInProvider = async (
  */
 const renderProvider = async (TurnkeySignerProvider, mocks, props = {}) => {
   const defaultProps = {
-    client: mocks.mockTurnkeyClient,
-    organizationId: 'test-org-id',
+    config: defaultConfig,
     children: React.createElement('div', null, 'Test'),
     ...props,
   };
@@ -278,7 +277,7 @@ test('useTurnkeySigner throws when used outside TurnkeySignerProvider', async ()
   }
 });
 
-test('useTurnkeySigner returns client, organizationId, and account', async () => {
+test('useTurnkeySigner returns client and account', async () => {
   const state = {};
   const mocks = createMocks(state);
   const { TurnkeySignerProvider, useTurnkeySigner, restore } =
@@ -293,7 +292,6 @@ test('useTurnkeySigner returns client, organizationId, and account', async () =>
 
     const result = getLatest();
     assert.ok(result.client, 'Should have client');
-    assert.strictEqual(result.organizationId, 'test-org-id', 'Should have organizationId');
     assert.ok('account' in result, 'Should have account property');
   } finally {
     restore();
@@ -335,8 +333,7 @@ test('setAccount() updates connection state', async () => {
     };
 
     const defaultProps = {
-      client: mocks.mockTurnkeyClient,
-      organizationId: 'test-org-id',
+      config: defaultConfig,
       children: React.createElement(Harness),
     };
 
@@ -386,8 +383,7 @@ test('disconnect() resets state', async () => {
     };
 
     const defaultProps = {
-      client: mocks.mockTurnkeyClient,
-      organizationId: 'test-org-id',
+      config: defaultConfig,
       children: React.createElement(Harness),
     };
 
@@ -454,8 +450,7 @@ test('SignerContext.signCb routes to Turnkey signing', async () => {
     };
 
     const defaultProps = {
-      client: mocks.mockTurnkeyClient,
-      organizationId: 'test-org-id',
+      config: defaultConfig,
       children: React.createElement(Harness),
     };
 
@@ -497,8 +492,7 @@ test('storeName includes account address for database isolation', async () => {
     };
 
     const defaultProps = {
-      client: mocks.mockTurnkeyClient,
-      organizationId: 'test-org-id',
+      config: defaultConfig,
       children: React.createElement(Harness),
     };
 
@@ -540,8 +534,7 @@ test('accountConfig has correct publicKeyCommitment when connected', async () =>
     };
 
     const defaultProps = {
-      client: mocks.mockTurnkeyClient,
-      organizationId: 'test-org-id',
+      config: defaultConfig,
       children: React.createElement(Harness),
     };
 
@@ -583,8 +576,7 @@ test('provider handles account without public key gracefully', async () => {
     };
 
     const defaultProps = {
-      client: mocks.mockTurnkeyClient,
-      organizationId: 'test-org-id',
+      config: defaultConfig,
       children: React.createElement(Harness),
     };
 

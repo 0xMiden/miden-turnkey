@@ -9,3 +9,4 @@ export {
   type TurnkeySignerProviderProps,
   type TurnkeySignerExtras,
 } from "./TurnkeySignerProvider";
+export type { TurnkeySDKClientConfig } from "@turnkey/sdk-browser";
