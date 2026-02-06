@@ -13,6 +13,7 @@
     }
   },
   "scripts": {
+    "test": "node --test tests",
     "build": "rm -rf dist && node scripts/build.mjs && tsc --emitDeclarationOnly --outDir dist/types",
     "prepack": "yarn build",
     "postpack": "node scripts/postpack.mjs"
@@ -35,8 +36,11 @@
   },
   "packageManager": "yarn@1.22.22",
   "devDependencies": {
+    "@types/react": "^19.0.0",
     "esbuild": "^0.24.0",
     "glob": "^11.0.0",
+    "react": "^19.2.0",
+    "react-test-renderer": "^19.2.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {
@@ -45,6 +49,7 @@
     "@turnkey/http": "^3.15.0",
     "@turnkey/sdk-browser": "^5.13.4"
   },
+  "peerDependencies": {},
   "files": [
     "dist"
   ]
