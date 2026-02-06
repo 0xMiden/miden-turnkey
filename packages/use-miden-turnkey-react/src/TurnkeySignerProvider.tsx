@@ -9,9 +9,9 @@ import {
 } from "react";
 import type { TurnkeyBrowserClient } from "@turnkey/sdk-browser";
 import type { WalletAccount } from "@turnkey/core";
-import { SignerContext, type SignerContextValue } from "@miden-sdk/react";
-import { evmPkToCommitment, fromTurnkeySig } from "./utils.js";
-import type { Turnkey, TConfig } from "./types.js";
+import { SignerContext, type SignerContextValue } from "./signer-types";
+import { evmPkToCommitment, fromTurnkeySig } from "@miden-sdk/miden-turnkey";
+import type { Turnkey, TConfig } from "@miden-sdk/miden-turnkey";
 import { isHttpClient } from "@turnkey/http";
 
 // TURNKEY SIGNER PROVIDER

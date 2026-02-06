@@ -37,13 +37,19 @@
   "peerDependencies": {
     "@demox-labs/miden-sdk": "^0.12.5",
     "@miden-sdk/miden-turnkey": "^1.0.0",
+    "@turnkey/core": "^1.8.2",
+    "@turnkey/http": "^3.15.0",
     "@turnkey/react-wallet-kit": "^1.6.2",
+    "@turnkey/sdk-browser": "^5.13.4",
     "react": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
     "@demox-labs/miden-sdk": "^0.12.5",
     "@miden-sdk/miden-turnkey": "file:../../",
+    "@turnkey/core": "^1.8.2",
+    "@turnkey/http": "^3.15.0",
     "@turnkey/react-wallet-kit": "^1.6.2",
+    "@turnkey/sdk-browser": "^5.13.4",
     "@types/react": "^19.0.0",
     "react": "^19.0.0",
     "tsup": "^8.3.5",

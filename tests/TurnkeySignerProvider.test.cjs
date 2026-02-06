@@ -34,6 +34,12 @@ const loadTurnkeySignerProvider = (mocks = {}) => {
     if (request.startsWith('@turnkey/core')) {
       return mocks['@turnkey/core'];
     }
+    if (request === 'react') {
+      return React;
+    }
+    if (request.startsWith('@miden-sdk/miden-turnkey')) {
+      return mocks['@miden-sdk/miden-turnkey'];
+    }
     if (request.startsWith('@miden-sdk/react')) {
       return mocks['@miden-sdk/react'];
     }
@@ -41,13 +47,13 @@ const loadTurnkeySignerProvider = (mocks = {}) => {
   };
 
   try {
-    const filePath = path.resolve(__dirname, '../src/TurnkeySignerProvider.tsx');
+    const filePath = path.resolve(__dirname, '../packages/use-miden-turnkey-react/src/TurnkeySignerProvider.tsx');
     const source = fs.readFileSync(filePath, 'utf8');
     const { outputText } = ts.transpileModule(source, {
       compilerOptions: {
         module: ts.ModuleKind.CommonJS,
         target: ts.ScriptTarget.ES2020,
-        jsx: ts.JsxEmit.React,
+        jsx: ts.JsxEmit.ReactJSX,
         esModuleInterop: true,
       },
       fileName: filePath,
@@ -82,6 +88,8 @@ const createMocks = (state = {}) => {
     },
   };
 
+  const SignerContextReact = React.createContext(null);
+
   return {
     '@turnkey/sdk-browser': {
       TurnkeyBrowserClient: function () {
@@ -93,7 +101,10 @@ const createMocks = (state = {}) => {
     },
     '@turnkey/core': {},
     '@miden-sdk/react': {
-      SignerContext: React.createContext(null),
+      SignerContext: SignerContextReact,
+    },
+    './signer-types': {
+      SignerContext: SignerContextReact,
     },
     '@demox-labs/miden-sdk': {
       AccountType: {
@@ -112,14 +123,13 @@ const createMocks = (state = {}) => {
         }),
       },
     },
-    './utils.js': {
+    '@miden-sdk/miden-turnkey': {
       evmPkToCommitment: async (publicKey) => ({
         serialize: () => new Uint8Array(32).fill(0x42),
         toHex: () => '0xcommitment',
       }),
       fromTurnkeySig: (sig) => new Uint8Array(67).fill(0xab),
     },
-    './types.js': {},
     mockTurnkeyClient,
   };
 };
