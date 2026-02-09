@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@miden-sdk/miden-sdk": "^0.13.0",
-    "@miden-sdk/react": "^0.13.1",
+    "@miden-sdk/react": "file:../../../miden-client/packages/react-sdk",
     "@miden-sdk/miden-turnkey": "file:../../",
     "@miden-sdk/miden-turnkey-react": "file:../../packages/use-miden-turnkey-react",
     "@turnkey/sdk-browser": "*",
