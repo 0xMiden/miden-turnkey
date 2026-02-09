@@ -19,7 +19,7 @@ import { evmPkToCommitment, fromTurnkeySig } from "@miden-sdk/miden-turnkey";
 export interface TurnkeySignerProviderProps {
   children: ReactNode;
   /** Turnkey SDK browser configuration (apiBaseUrl, defaultOrganizationId, rpId, etc.) */
-  config: TurnkeySDKBrowserConfig;
+  config?: Partial<TurnkeySDKBrowserConfig>;
 }
 
 /**
@@ -66,13 +66,23 @@ async function signWithTurnkey(
  * </TurnkeySignerProvider>
  * ```
  */
+const TURNKEY_DEFAULTS: TurnkeySDKBrowserConfig = {
+  apiBaseUrl: "https://api.turnkey.com",
+  defaultOrganizationId: import.meta.env.VITE_TURNKEY_ORG_ID ?? "",
+};
+
 export function TurnkeySignerProvider({
   children,
   config,
 }: TurnkeySignerProviderProps) {
+  const resolvedConfig: TurnkeySDKBrowserConfig = {
+    ...TURNKEY_DEFAULTS,
+    ...config,
+  };
+
   const turnkey = useMemo(
-    () => new Turnkey(config),
-    [config.apiBaseUrl, config.defaultOrganizationId]
+    () => new Turnkey(resolvedConfig),
+    [resolvedConfig.apiBaseUrl, resolvedConfig.defaultOrganizationId]
   );
 
   const [client, setClient] = useState<TurnkeyBrowserClient | null>(null);

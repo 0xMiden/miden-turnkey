@@ -5,10 +5,7 @@ import { MidenProvider } from '@miden-sdk/react';
 import App from './App';
 
 createRoot(document.getElementById('root')!).render(
-  <TurnkeySignerProvider config={{
-    apiBaseUrl: "https://api.turnkey.com",
-    defaultOrganizationId: import.meta.env.VITE_TURNKEY_ORG_ID,
-  }}>
+  <TurnkeySignerProvider>
     <MidenProvider config={{ rpcUrl: 'devnet', prover: 'devnet' }}>
       <App />
     </MidenProvider>
