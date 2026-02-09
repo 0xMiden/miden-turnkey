@@ -10,3 +10,4 @@ export {
   type TurnkeySignerExtras,
 } from "./TurnkeySignerProvider";
 export type { TurnkeySDKClientConfig } from "@turnkey/sdk-browser";
+export { SignerContext, useSigner } from "@miden-sdk/react";

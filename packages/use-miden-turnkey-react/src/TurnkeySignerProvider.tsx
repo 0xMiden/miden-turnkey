@@ -9,7 +9,7 @@ import {
 } from "react";
 import { TurnkeyBrowserClient, type TurnkeySDKClientConfig } from "@turnkey/sdk-browser";
 import type { WalletAccount } from "@turnkey/core";
-import { SignerContext, type SignerContextValue } from "./signer-types";
+import { SignerContext, type SignerContextValue } from "@miden-sdk/react";
 import { evmPkToCommitment, fromTurnkeySig } from "@miden-sdk/miden-turnkey";
 
 // TURNKEY SIGNER PROVIDER
@@ -71,7 +71,7 @@ export function TurnkeySignerProvider({
 }: TurnkeySignerProviderProps) {
   const client = useMemo(
     () => new TurnkeyBrowserClient(config),
-    [config.apiBaseUrl, config.organizationId]
+    [config.apiBaseUrl, (config as any).defaultOrganizationId ?? config.organizationId]
   );
 
   const [account, setAccount] = useState<WalletAccount | null>(null);
@@ -79,14 +79,28 @@ export function TurnkeySignerProvider({
 
   // Connect/disconnect methods (stable references)
   const connect = useCallback(async () => {
-    // For Turnkey, connection typically happens through passkey/email auth
-    // The app should call this after the user authenticates
-    // For now, we need the account to be set externally or through a login flow
-    // This is a placeholder - apps should use useTurnkeySigner().setAccount()
-    console.warn(
-      "TurnkeySignerProvider.connect() called - please set account via useTurnkeySigner().setAccount()"
-    );
-  }, []);
+    // 1. Passkey login
+    await client.loginWithPasskey({ sessionType: "READ_WRITE" });
+
+    // 2. Get wallets
+    const { wallets } = await client.getWallets();
+    if (!wallets.length) throw new Error("No wallets found");
+
+    // 3. Get accounts from first wallet
+    const { accounts } = await client.getWalletAccounts({
+      walletId: wallets[0].walletId,
+    });
+    if (!accounts.length) throw new Error("No accounts found");
+
+    // 4. Select first Ethereum-format account
+    const acct =
+      accounts.find((a) => a.addressFormat === "ADDRESS_FORMAT_ETHEREUM") ??
+      accounts[0];
+
+    // 5. Set connected
+    setAccount(acct as WalletAccount);
+    setIsConnected(true);
+  }, [client]);
 
   const disconnect = useCallback(async () => {
     setAccount(null);
@@ -135,7 +149,7 @@ export function TurnkeySignerProvider({
         const commitmentBytes = commitment.serialize();
 
         const signCb = async (_: Uint8Array, signingInputs: Uint8Array) => {
-          const { SigningInputs } = await import("@demox-labs/miden-sdk");
+          const { SigningInputs } = await import("@miden-sdk/miden-sdk");
           const inputs = SigningInputs.deserialize(signingInputs);
           const messageHex = inputs.toCommitment().toHex();
 
@@ -144,7 +158,7 @@ export function TurnkeySignerProvider({
         };
 
         if (!cancelled) {
-          const { AccountStorageMode } = await import("@demox-labs/miden-sdk");
+          const { AccountStorageMode } = await import("@miden-sdk/miden-sdk");
 
           setSignerContext({
             signCb,
