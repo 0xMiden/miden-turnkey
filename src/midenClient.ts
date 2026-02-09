@@ -53,7 +53,7 @@ const sign = async (
 
 const signCb = (turnkeyConfig: TConfig) => {
   return async (_: Uint8Array, signingInputs: Uint8Array) => {
-    const { SigningInputs } = await import("@demox-labs/miden-sdk");
+    const { SigningInputs } = await import("@miden-sdk/miden-sdk");
     const deSigningInputs = SigningInputs.deserialize(signingInputs);
     const message = deSigningInputs.toCommitment().toHex();
     const sig = await sign(message, turnkeyConfig);
@@ -76,10 +76,10 @@ export async function createMidenTurnkeyClient(
   turnkeyConfig: TConfig,
   opts: MidenClientOpts & MidenAccountOpts
 ): Promise<{
-  client: import("@demox-labs/miden-sdk").WebClient;
+  client: import("@miden-sdk/miden-sdk").WebClient;
   accountId: string;
 }> {
-  const { WebClient } = await import("@demox-labs/miden-sdk");
+  const { WebClient } = await import("@miden-sdk/miden-sdk");
   ///@ts-ignore
   const webClient = await WebClient.createClientWithExternalKeystore(
     opts.endpoint,
@@ -100,9 +100,9 @@ export async function createMidenTurnkeyClient(
 }
 
 export async function createAccont(
-  midenClient: import("@demox-labs/miden-sdk").WebClient,
-  type: import("@demox-labs/miden-sdk").AccountType,
-  storageMode: import("@demox-labs/miden-sdk").AccountStorageMode,
+  midenClient: import("@miden-sdk/miden-sdk").WebClient,
+  type: import("@miden-sdk/miden-sdk").AccountType,
+  storageMode: import("@miden-sdk/miden-sdk").AccountStorageMode,
   config: TConfig,
   opts?: MidenClientOpts
 ) {
@@ -114,7 +114,7 @@ export async function createAccont(
   await midenClient.syncState();
   const pkc = await evmPkToCommitment(compressedPublicKey);
   const { AccountBuilder, AccountComponent, AccountStorageMode } = await import(
-    "@demox-labs/miden-sdk"
+    "@miden-sdk/miden-sdk"
   );
   const accountBuilder = new AccountBuilder(
     accountSeedFromStr(opts?.accountSeed) ?? new Uint8Array(32).fill(0)

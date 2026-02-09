@@ -1,7 +1,12 @@
 {
   "name": "@miden-sdk/miden-turnkey",
+  "private": true,
   "version": "1.0.0",
   "description": "Miden Turnkey Integration SDK",
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
@@ -15,6 +20,7 @@
   "scripts": {
     "test": "node --test tests",
     "build": "rm -rf dist && node scripts/build.mjs && tsc --emitDeclarationOnly --outDir dist/types",
+    "publish": "node scripts/publish.mjs",
     "prepack": "yarn build",
     "postpack": "node scripts/postpack.mjs"
   },

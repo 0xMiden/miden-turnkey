@@ -7,7 +7,8 @@ import {
   useContext,
   type ReactNode,
 } from "react";
-import { TurnkeyBrowserClient, type TurnkeySDKClientConfig } from "@turnkey/sdk-browser";
+import { Turnkey, type TurnkeySDKBrowserConfig, SessionType } from "@turnkey/sdk-browser";
+import type { TurnkeyBrowserClient } from "@turnkey/sdk-browser";
 import type { WalletAccount } from "@turnkey/core";
 import { SignerContext, type SignerContextValue } from "@miden-sdk/react";
 import { evmPkToCommitment, fromTurnkeySig } from "@miden-sdk/miden-turnkey";
@@ -17,16 +18,16 @@ import { evmPkToCommitment, fromTurnkeySig } from "@miden-sdk/miden-turnkey";
 
 export interface TurnkeySignerProviderProps {
   children: ReactNode;
-  /** Turnkey SDK client configuration (apiBaseUrl, organizationId, stamper, etc.) */
-  config: TurnkeySDKClientConfig;
+  /** Turnkey SDK browser configuration (apiBaseUrl, defaultOrganizationId, rpId, etc.) */
+  config: TurnkeySDKBrowserConfig;
 }
 
 /**
  * Turnkey-specific extras exposed via useTurnkeySigner hook.
  */
 export interface TurnkeySignerExtras {
-  /** Turnkey browser client instance */
-  client: TurnkeyBrowserClient;
+  /** Turnkey browser client instance (null if not yet connected) */
+  client: TurnkeyBrowserClient | null;
   /** Connected account (null if not connected) */
   account: WalletAccount | null;
 }
@@ -69,38 +70,51 @@ export function TurnkeySignerProvider({
   children,
   config,
 }: TurnkeySignerProviderProps) {
-  const client = useMemo(
-    () => new TurnkeyBrowserClient(config),
-    [config.apiBaseUrl, (config as any).defaultOrganizationId ?? config.organizationId]
+  const turnkey = useMemo(
+    () => new Turnkey(config),
+    [config.apiBaseUrl, config.defaultOrganizationId]
   );
 
+  const [client, setClient] = useState<TurnkeyBrowserClient | null>(null);
   const [account, setAccount] = useState<WalletAccount | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
   // Connect/disconnect methods (stable references)
   const connect = useCallback(async () => {
-    // 1. Passkey login
-    await client.loginWithPasskey({ sessionType: "READ_WRITE" });
+    // 1. Create IndexedDB client and initialize its keypair
+    const indexedDbClient = await turnkey.indexedDbClient();
+    await indexedDbClient.init();
 
-    // 2. Get wallets
-    const { wallets } = await client.getWallets();
+    // 2. Only login if no existing session
+    const existingSession = await turnkey.getSession();
+    if (!existingSession) {
+      const passkeyClient = turnkey.passkeyClient();
+      await passkeyClient.loginWithPasskey({
+        sessionType: SessionType.READ_WRITE,
+        publicKey: (await indexedDbClient.getPublicKey())!,
+      });
+    }
+
+    // 3. Get wallets (using the now-authenticated indexedDbClient)
+    const { wallets } = await indexedDbClient.getWallets();
     if (!wallets.length) throw new Error("No wallets found");
 
-    // 3. Get accounts from first wallet
-    const { accounts } = await client.getWalletAccounts({
+    // 4. Get accounts from first wallet
+    const { accounts } = await indexedDbClient.getWalletAccounts({
       walletId: wallets[0].walletId,
     });
     if (!accounts.length) throw new Error("No accounts found");
 
-    // 4. Select first Ethereum-format account
+    // 5. Select first Ethereum-format account
     const acct =
       accounts.find((a) => a.addressFormat === "ADDRESS_FORMAT_ETHEREUM") ??
       accounts[0];
 
-    // 5. Set connected
+    // 6. Set connected
+    setClient(indexedDbClient);
     setAccount(acct as WalletAccount);
     setIsConnected(true);
-  }, [client]);
+  }, [turnkey]);
 
   const disconnect = useCallback(async () => {
     setAccount(null);
@@ -122,7 +136,7 @@ export function TurnkeySignerProvider({
     let cancelled = false;
 
     async function buildContext() {
-      if (!isConnected || !account) {
+      if (!isConnected || !account || !client) {
         // Not connected - provide context with connect/disconnect but no signing capability
         setSignerContext({
           signCb: async () => {
