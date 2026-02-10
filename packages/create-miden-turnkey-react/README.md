@@ -23,7 +23,7 @@ The generated project includes:
 - **Vite** - Fast build tool with HMR
 - **React 18/19** - UI library
 - **TypeScript** - Type safety
-- **@demox-labs/miden-sdk** - Miden blockchain SDK
+- **@miden-sdk/miden-sdk** - Miden blockchain SDK
 - **@turnkey/react-wallet-kit** - Turnkey wallet integration
 - **@miden-sdk/miden-turnkey** - Miden + Turnkey integration layer
 - **@miden-sdk/miden-turnkey-react** - React hook for Miden + Turnkey

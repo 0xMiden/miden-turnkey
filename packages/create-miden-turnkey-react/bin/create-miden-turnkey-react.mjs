@@ -71,7 +71,7 @@ try {
 
   pkg.dependencies = {
     ...pkg.dependencies,
-    "@demox-labs/miden-sdk": "^0.12.5",
+    "@miden-sdk/miden-sdk": "^0.13.0",
     "@miden-sdk/miden-turnkey": "^1.0.0",
     "@miden-sdk/miden-turnkey-react": "^1.0.0",
     "@turnkey/react-wallet-kit": "^1.6.2",

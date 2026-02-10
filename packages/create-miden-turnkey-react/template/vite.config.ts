@@ -22,7 +22,7 @@ export default defineConfig({
     target: "esnext",
   },
   optimizeDeps: {
-    exclude: ["@demox-labs/miden-sdk"],
+    exclude: ["@miden-sdk/miden-sdk"],
   },
   worker: {
     format: "es",

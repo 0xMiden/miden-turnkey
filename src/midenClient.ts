@@ -80,8 +80,7 @@ export async function createMidenTurnkeyClient(
   accountId: string;
 }> {
   const { WebClient } = await import("@miden-sdk/miden-sdk");
-  ///@ts-ignore
-  const webClient = await WebClient.createClientWithExternalKeystore(
+  const webClient = await (WebClient.createClientWithExternalKeystore as any)(
     opts.endpoint,
     opts.noteTransportUrl,
     opts.seed,

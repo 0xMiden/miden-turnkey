@@ -18,8 +18,9 @@ import { evmPkToCommitment, fromTurnkeySig } from "@miden-sdk/miden-turnkey";
 
 export interface TurnkeySignerProviderProps {
   children: ReactNode;
-  /** Turnkey SDK browser configuration (apiBaseUrl, defaultOrganizationId, rpId, etc.) */
-  config?: Partial<TurnkeySDKBrowserConfig>;
+  /** Turnkey SDK browser configuration (defaultOrganizationId is required; apiBaseUrl defaults to https://api.turnkey.com) */
+  config: Pick<TurnkeySDKBrowserConfig, "defaultOrganizationId"> &
+    Partial<Omit<TurnkeySDKBrowserConfig, "defaultOrganizationId">>;
 }
 
 /**
@@ -66,9 +67,8 @@ async function signWithTurnkey(
  * </TurnkeySignerProvider>
  * ```
  */
-const TURNKEY_DEFAULTS: TurnkeySDKBrowserConfig = {
+const TURNKEY_DEFAULTS = {
   apiBaseUrl: "https://api.turnkey.com",
-  defaultOrganizationId: import.meta.env.VITE_TURNKEY_ORG_ID ?? "",
 };
 
 export function TurnkeySignerProvider({
@@ -146,7 +146,7 @@ export function TurnkeySignerProvider({
     let cancelled = false;
 
     async function buildContext() {
-      if (!isConnected || !account || !client) {
+      if (!isConnected || !account) {
         // Not connected - provide context with connect/disconnect but no signing capability
         setSignerContext({
           signCb: async () => {
@@ -173,6 +173,7 @@ export function TurnkeySignerProvider({
         const commitmentBytes = commitment.serialize();
 
         const signCb = async (_: Uint8Array, signingInputs: Uint8Array) => {
+          if (!client) throw new Error("Turnkey client not available");
           const { SigningInputs } = await import("@miden-sdk/miden-sdk");
           const inputs = SigningInputs.deserialize(signingInputs);
           const messageHex = inputs.toCommitment().toHex();

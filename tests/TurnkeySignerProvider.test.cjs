@@ -22,8 +22,8 @@ const loadTurnkeySignerProvider = (mocks = {}) => {
   const originalLoad = Module._load;
   Module._load = function patchedLoad(request, parent, isMain) {
     if (mocks[request]) return mocks[request];
-    if (request.startsWith('@demox-labs/miden-sdk')) {
-      return mocks['@demox-labs/miden-sdk'];
+    if (request.startsWith('@miden-sdk/miden-sdk')) {
+      return mocks['@miden-sdk/miden-sdk'];
     }
     if (request.startsWith('@turnkey/sdk-browser')) {
       return mocks['@turnkey/sdk-browser'];
@@ -92,6 +92,14 @@ const createMocks = (state = {}) => {
       TurnkeyBrowserClient: function () {
         return mockTurnkeyClient;
       },
+      Turnkey: function () {
+        return {
+          indexedDbClient: async () => mockTurnkeyClient,
+          passkeyClient: () => mockTurnkeyClient,
+          getSession: async () => null,
+        };
+      },
+      SessionType: { READ_WRITE: 'READ_WRITE' },
     },
     '@turnkey/core': {},
     '@miden-sdk/react': {
@@ -100,7 +108,7 @@ const createMocks = (state = {}) => {
     './signer-types': {
       SignerContext: SignerContextReact,
     },
-    '@demox-labs/miden-sdk': {
+    '@miden-sdk/miden-sdk': {
       AccountType: {
         RegularAccountImmutableCode: 'RegularAccountImmutableCode',
         RegularAccountUpdatableCode: 'RegularAccountUpdatableCode',
@@ -131,7 +139,7 @@ const createMocks = (state = {}) => {
 /** Default config prop for tests */
 const defaultConfig = {
   apiBaseUrl: 'https://api.turnkey.com',
-  organizationId: 'test-org-id',
+  defaultOrganizationId: 'test-org-id',
   stamper: { stamp: async () => ({ stampHeaderName: 'x', stampHeaderValue: 'y' }) },
 };
 
@@ -291,7 +299,7 @@ test('useTurnkeySigner returns client and account', async () => {
     );
 
     const result = getLatest();
-    assert.ok(result.client, 'Should have client');
+    assert.ok('client' in result, 'Should have client property');
     assert.ok('account' in result, 'Should have account property');
   } finally {
     restore();
@@ -359,9 +367,11 @@ test('setAccount() updates connection state', async () => {
       hookResult.setAccount(mockAccount);
       await flushPromises();
       await flushPromises();
+      await flushPromises();
+      await flushPromises();
     });
 
-    // Now should be connected
+    // Now should be connected (async context build completes after evmPkToCommitment resolves)
     assert.strictEqual(hookResult.isConnected, true, 'Should be connected after setAccount');
     assert.deepStrictEqual(hookResult.account, mockAccount, 'Account should be set');
   } finally {
@@ -404,6 +414,9 @@ test('disconnect() resets state', async () => {
     await act(async () => {
       hookResult.setAccount(mockAccount);
       await flushPromises();
+      await flushPromises();
+      await flushPromises();
+      await flushPromises();
     });
 
     assert.strictEqual(hookResult.isConnected, true);
@@ -411,6 +424,7 @@ test('disconnect() resets state', async () => {
     // Now disconnect (set account to null)
     await act(async () => {
       hookResult.setAccount(null);
+      await flushPromises();
       await flushPromises();
     });
 

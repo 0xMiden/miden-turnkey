@@ -1026,8 +1026,14 @@
     "@turnkey/http" "^3.15.0"
     "@turnkey/sdk-browser" "^5.13.4"
 
-"@miden-sdk/react@file:../miden-client/packages/react-sdk":
+"@miden-sdk/miden-turnkey@link:.":
+  version "0.0.0"
+  uid ""
+
+"@miden-sdk/react@^0.13.2":
   version "0.13.2"
+  resolved "https://registry.yarnpkg.com/@miden-sdk/react/-/react-0.13.2.tgz#bad9b88449bb7ca1a2e55274b360b1e729a409fe"
+  integrity sha512-78i3/5YUUwitqvJA02HVXZ61RXEOyaiRsm1agVUtOblOmazuIgMEW4P3gdlX9YUiGr06l9O+Rw1ol5FZCOJTXQ==
   dependencies:
     zustand "^5.0.0"
 

@@ -13,7 +13,7 @@ export default defineConfig({
   clean: true,
   external: [
     "react",
-    "@demox-labs/miden-sdk",
+    "@miden-sdk/miden-sdk",
     "@miden-sdk/miden-turnkey",
     "@turnkey/core",
     "@turnkey/react-wallet-kit",

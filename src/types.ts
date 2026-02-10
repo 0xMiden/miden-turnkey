@@ -24,7 +24,7 @@ export type TConfig = {
 export interface MidenClientOpts {
   endpoint?: string;
   noteTransportUrl?: string;
-  seed?: string;
+  seed?: Uint8Array;
   accountSeed?: string;
 }
 

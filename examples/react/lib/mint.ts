@@ -4,14 +4,14 @@ import { toast } from "sonner";
 
 export async function createFaucetMintAndConsume(
   // client from useMiden hook
-  client: import("@demox-labs/miden-sdk").WebClient,
+  client: import("@miden-sdk/miden-sdk").WebClient,
   accountId: string,
   setProgress: React.Dispatch<
     React.SetStateAction<MintAndConsumeProgress | null>
   >
 ) {
   const { WebClient, AccountStorageMode, NoteType, AccountId } = await import(
-    "@demox-labs/miden-sdk"
+    "@miden-sdk/miden-sdk"
   );
   setProgress({ stage: MintAndConsumeStage.CreatingFaucet });
   const newClient = await WebClient.createClient(); // default endpoint is tesnet
