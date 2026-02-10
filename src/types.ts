@@ -24,11 +24,11 @@ export type TConfig = {
 export interface MidenClientOpts {
   endpoint?: string;
   noteTransportUrl?: string;
-  seed?: string;
+  seed?: Uint8Array;
   accountSeed?: string;
 }
 
 export interface MidenAccountOpts {
-  type: import("@demox-labs/miden-sdk").AccountType;
-  storageMode: import("@demox-labs/miden-sdk").AccountStorageMode;
+  type: import("@miden-sdk/miden-sdk").AccountType;
+  storageMode: import("@miden-sdk/miden-sdk").AccountStorageMode;
 }

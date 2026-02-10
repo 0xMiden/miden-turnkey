@@ -1,0 +1,31 @@
+{
+  "name": "react-signer-turnkey-example",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@miden-sdk/miden-sdk": "^0.13.0",
+    "@miden-sdk/react": "^0.13.2",
+    "@miden-sdk/miden-turnkey": "*",
+    "@miden-sdk/miden-turnkey-react": "*",
+    "@turnkey/sdk-browser": "*",
+    "@turnkey/core": "*",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.1.1",
+    "typescript": "~5.8.3",
+    "vite": "^6.2.0",
+    "vite-plugin-node-polyfills": "^0.24.0",
+    "vite-plugin-top-level-await": "^1.6.0",
+    "vite-plugin-wasm": "^3.5.0"
+  }
+}

@@ -124,7 +124,7 @@ function useTurnkeyMiden(
 ```
 
 ### Peer dependencies:
-- `@demox-labs/miden-sdk@^0.12.5`
+- `@miden-sdk/miden-sdk@^0.13.0`
 - `@turnkey/react-wallet-kit@^1.6.2`
 - `miden-turnkey@^1.0.0`
 - `react@^18.0.0 || ^19.0.0`

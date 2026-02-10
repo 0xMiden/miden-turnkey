@@ -1,7 +1,12 @@
 {
   "name": "@miden-sdk/miden-turnkey",
-  "version": "1.0.0",
+  "private": true,
+  "version": "1.0.1",
   "description": "Miden Turnkey Integration SDK",
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
@@ -13,7 +18,9 @@
     }
   },
   "scripts": {
+    "test": "node --test tests",
     "build": "rm -rf dist && node scripts/build.mjs && tsc --emitDeclarationOnly --outDir dist/types",
+    "publish": "node scripts/publish.mjs",
     "prepack": "yarn build",
     "postpack": "node scripts/postpack.mjs"
   },
@@ -35,16 +42,20 @@
   },
   "packageManager": "yarn@1.22.22",
   "devDependencies": {
+    "@types/react": "^19.0.0",
     "esbuild": "^0.24.0",
     "glob": "^11.0.0",
+    "react": "^19.2.0",
+    "react-test-renderer": "^19.2.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@demox-labs/miden-sdk": "^0.12.5",
+    "@miden-sdk/miden-sdk": "^0.13.0",
     "@turnkey/core": "^1.8.2",
     "@turnkey/http": "^3.15.0",
     "@turnkey/sdk-browser": "^5.13.4"
   },
+  "peerDependencies": {},
   "files": [
     "dist"
   ]

@@ -25,7 +25,7 @@ yarn dev
 ### Option 2: Add to an existing React project
 
 ```bash
-yarn add @miden-sdk/miden-turnkey @miden-sdk/miden-turnkey-react @demox-labs/miden-sdk @turnkey/react-wallet-kit
+yarn add @miden-sdk/miden-turnkey @miden-sdk/miden-turnkey-react @miden-sdk/miden-sdk @turnkey/react-wallet-kit
 ```
 
 ```tsx
@@ -56,7 +56,7 @@ function MidenApp() {
 ### Option 3: Use the core SDK directly
 
 ```bash
-yarn add @miden-sdk/miden-turnkey @demox-labs/miden-sdk @turnkey/http
+yarn add @miden-sdk/miden-turnkey @miden-sdk/miden-sdk @turnkey/http
 ```
 
 ```typescript
@@ -93,7 +93,7 @@ yarn add @miden-sdk/miden-turnkey
 ```
 
 **Peer Dependencies:**
-- `@demox-labs/miden-sdk@^0.12.5`
+- `@miden-sdk/miden-sdk@^0.13.0`
 - `@turnkey/core@^1.8.2`
 - `@turnkey/http@^3.15.0`
 - `@turnkey/sdk-browser@^5.13.4`
@@ -106,7 +106,7 @@ yarn add @miden-sdk/miden-turnkey-react
 
 **Peer Dependencies:**
 - `@miden-sdk/miden-turnkey@^1.0.0`
-- `@demox-labs/miden-sdk@^0.12.5`
+- `@miden-sdk/miden-sdk@^0.13.0`
 - `@turnkey/react-wallet-kit@^1.6.2`
 - `react@^18.0.0 || ^19.0.0`
 

@@ -13,7 +13,7 @@ yarn add @miden-sdk/miden-turnkey-react
 This package requires the following peer dependencies:
 
 ```bash
-yarn add @demox-labs/miden-sdk @miden-sdk/miden-turnkey @turnkey/react-wallet-kit react
+yarn add @miden-sdk/miden-sdk @miden-sdk/miden-turnkey @turnkey/react-wallet-kit react
 ```
 
 ## Usage

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { WebClient } from "@demox-labs/miden-sdk";
+import type { WebClient } from "@miden-sdk/miden-sdk";
 import type { Wallet } from "@turnkey/core";
 import type { ClientContextType } from "@turnkey/react-wallet-kit";
 import { useTurnkey } from "@turnkey/react-wallet-kit";
@@ -60,7 +60,7 @@ export function useTurnkeyMiden(
     let mounted = true;
     const loadClient = async () => {
       const { AccountType, AccountStorageMode } = await import(
-        "@demox-labs/miden-sdk"
+        "@miden-sdk/miden-sdk"
       );
 
       const accountStorageMode =
@@ -71,7 +71,7 @@ export function useTurnkeyMiden(
       const { client: midenClient, accountId: newAccountId } =
         await createMidenTurnkeyClient(
           {
-            client: httpClient,
+            client: httpClient as any,
             account: embeddedWallets[0].accounts[0],
             organizationId,
           },
@@ -85,7 +85,7 @@ export function useTurnkeyMiden(
         );
 
       if (mounted) {
-        setClient(midenClient);
+        setClient(midenClient as any);
         setAccountId(newAccountId);
       }
     };
