@@ -7,10 +7,18 @@ import {
   useContext,
   type ReactNode,
 } from "react";
-import { Turnkey, type TurnkeySDKBrowserConfig, SessionType } from "@turnkey/sdk-browser";
+import {
+  Turnkey,
+  type TurnkeySDKBrowserConfig,
+  SessionType,
+} from "@turnkey/sdk-browser";
 import type { TurnkeyBrowserClient } from "@turnkey/sdk-browser";
 import type { WalletAccount } from "@turnkey/core";
-import { SignerContext, type SignerContextValue } from "@miden-sdk/react";
+import {
+  SignerContext,
+  type SignerContextValue,
+  type SignerAccountConfig,
+} from "@miden-sdk/react";
 import { evmPkToCommitment, fromTurnkeySig } from "@miden-sdk/miden-turnkey";
 
 // TURNKEY SIGNER PROVIDER
@@ -21,6 +29,8 @@ export interface TurnkeySignerProviderProps {
   /** Turnkey SDK browser configuration (defaultOrganizationId is required; apiBaseUrl defaults to https://api.turnkey.com) */
   config: Pick<TurnkeySDKBrowserConfig, "defaultOrganizationId"> &
     Partial<Omit<TurnkeySDKBrowserConfig, "defaultOrganizationId">>;
+  /** Optional custom account components to include in the account (e.g. from a compiled .masp package) */
+  customComponents?: SignerAccountConfig["customComponents"];
 }
 
 /**
@@ -34,7 +44,7 @@ export interface TurnkeySignerExtras {
 }
 
 const TurnkeySignerExtrasContext = createContext<TurnkeySignerExtras | null>(
-  null
+  null,
 );
 
 /**
@@ -43,7 +53,7 @@ const TurnkeySignerExtrasContext = createContext<TurnkeySignerExtras | null>(
 async function signWithTurnkey(
   messageHex: string,
   client: TurnkeyBrowserClient,
-  account: WalletAccount
+  account: WalletAccount,
 ): Promise<{ r: string; s: string; v: string }> {
   const result = await client.signRawPayload({
     signWith: account.address,
@@ -74,6 +84,7 @@ const TURNKEY_DEFAULTS = {
 export function TurnkeySignerProvider({
   children,
   config,
+  customComponents,
 }: TurnkeySignerProviderProps) {
   const resolvedConfig: TurnkeySDKBrowserConfig = {
     ...TURNKEY_DEFAULTS,
@@ -82,7 +93,7 @@ export function TurnkeySignerProvider({
 
   const turnkey = useMemo(
     () => new Turnkey(resolvedConfig),
-    [resolvedConfig.apiBaseUrl, resolvedConfig.defaultOrganizationId]
+    [resolvedConfig.apiBaseUrl, resolvedConfig.defaultOrganizationId],
   );
 
   const [client, setClient] = useState<TurnkeyBrowserClient | null>(null);
@@ -139,7 +150,7 @@ export function TurnkeySignerProvider({
 
   // Build signer context
   const [signerContext, setSignerContext] = useState<SignerContextValue | null>(
-    null
+    null,
   );
 
   useEffect(() => {
@@ -191,6 +202,7 @@ export function TurnkeySignerProvider({
               publicKeyCommitment: commitmentBytes,
               accountType: "RegularAccountImmutableCode",
               storageMode: AccountStorageMode.public(),
+              ...(customComponents?.length ? { customComponents } : {}),
             },
             storeName: `turnkey_${account.address}`,
             name: "Turnkey",
@@ -230,7 +242,7 @@ export function TurnkeySignerProvider({
       account,
       setAccount: setConnectedAccount,
     }),
-    [client, account, setConnectedAccount]
+    [client, account, setConnectedAccount],
   );
 
   return (
@@ -258,12 +270,16 @@ export function useTurnkeySigner(): TurnkeySignerExtras & {
   isConnected: boolean;
   setAccount: (account: WalletAccount | null) => void;
 } {
-  const extras = useContext(TurnkeySignerExtrasContext) as TurnkeySignerExtras & {
-    setAccount: (account: WalletAccount | null) => void;
-  } | null;
+  const extras = useContext(TurnkeySignerExtrasContext) as
+    | (TurnkeySignerExtras & {
+        setAccount: (account: WalletAccount | null) => void;
+      })
+    | null;
   const signer = useContext(SignerContext);
   if (!extras) {
-    throw new Error("useTurnkeySigner must be used within TurnkeySignerProvider");
+    throw new Error(
+      "useTurnkeySigner must be used within TurnkeySignerProvider",
+    );
   }
   return { ...extras, isConnected: signer?.isConnected ?? false };
 }
