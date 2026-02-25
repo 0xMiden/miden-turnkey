@@ -1,7 +1,7 @@
 {
   "name": "@miden-sdk/miden-turnkey",
   "private": true,
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Miden Turnkey Integration SDK",
   "workspaces": [
     "packages/*",
@@ -50,7 +50,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@miden-sdk/miden-sdk": "^0.13.0",
+    "@miden-sdk/miden-sdk": "^0.13.1",
     "@turnkey/core": "^1.8.2",
     "@turnkey/http": "^3.15.0",
     "@turnkey/sdk-browser": "^5.13.4"
