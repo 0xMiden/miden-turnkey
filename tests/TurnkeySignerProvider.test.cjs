@@ -109,10 +109,6 @@ const createMocks = (state = {}) => {
       SignerContext: SignerContextReact,
     },
     '@miden-sdk/miden-sdk': {
-      AccountType: {
-        RegularAccountImmutableCode: 'RegularAccountImmutableCode',
-        RegularAccountUpdatableCode: 'RegularAccountUpdatableCode',
-      },
       AccountStorageMode: {
         public: () => ({ toString: () => 'public' }),
         private: () => ({ toString: () => 'private' }),
