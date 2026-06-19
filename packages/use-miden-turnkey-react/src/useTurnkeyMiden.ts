@@ -59,9 +59,7 @@ export function useTurnkeyMiden(
 
     let mounted = true;
     const loadClient = async () => {
-      const { AccountType, AccountStorageMode } = await import(
-        "@miden-sdk/miden-sdk"
-      );
+      const { AccountStorageMode } = await import("@miden-sdk/miden-sdk");
 
       const accountStorageMode =
         storageMode === "public"
@@ -79,7 +77,6 @@ export function useTurnkeyMiden(
             endpoint: opts.endpoint || nodeUrl,
             noteTransportUrl: opts.noteTransportUrl,
             accountSeed: opts.accountSeed,
-            type: AccountType.RegularAccountImmutableCode,
             storageMode: accountStorageMode,
           }
         );

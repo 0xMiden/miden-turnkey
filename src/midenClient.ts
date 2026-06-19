@@ -6,7 +6,6 @@ import type {
 } from "./types";
 import type {
   MidenClient,
-  AccountType,
   AccountStorageMode,
 } from "@miden-sdk/miden-sdk";
 import {
@@ -102,7 +101,6 @@ export async function createMidenTurnkeyClient(
   });
   const accountId = await createAccont(
     client,
-    opts.type,
     opts.storageMode,
     turnkeyConfig,
     opts
@@ -112,7 +110,6 @@ export async function createMidenTurnkeyClient(
 
 export async function createAccont(
   midenClient: MidenClient,
-  type: AccountType,
   storageMode: AccountStorageMode,
   config: TConfig,
   opts?: MidenClientOpts
@@ -135,11 +132,10 @@ export async function createAccont(
     .withAuthComponent(
       AccountComponent.createAuthComponentFromCommitment(pkc, 1)
     )
-    .accountType(type)
     .storageMode(storageMode)
     .withBasicWalletComponent()
     .build().account;
-  // If the account already exists on-chain (e.g. public/network), hydrate it instead of
+  // If the account already exists on-chain (e.g. public), hydrate it instead of
   // recreating a "new" account with zero commitment, which causes submission to fail.
   if (storageMode !== AccountStorageMode.private()) {
     try {
