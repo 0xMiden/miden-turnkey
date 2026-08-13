@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { MidenClient } from "@miden-sdk/miden-sdk";
 import type { Wallet } from "@turnkey/core";
 import type { ClientContextType } from "@turnkey/react-wallet-kit";
@@ -30,6 +30,7 @@ export function useTurnkeyMiden(
 ): UseTurnkeyMidenResult {
   const [client, setClient] = useState<MidenClient | null>(null);
   const [accountId, setAccountId] = useState<string | null>(null);
+  const clientRef = useRef<MidenClient | null>(null);
 
   const turnkey = useTurnkey();
   const { wallets, httpClient, session } = turnkey;
@@ -81,10 +82,14 @@ export function useTurnkeyMiden(
           }
         );
 
-      if (mounted) {
-        setClient(midenClient as any);
-        setAccountId(newAccountId);
+      if (!mounted) {
+        midenClient.terminate();
+        return;
       }
+
+      clientRef.current = midenClient as any;
+      setClient(midenClient as any);
+      setAccountId(newAccountId);
     };
 
     loadClient().catch((err) => {
@@ -93,7 +98,8 @@ export function useTurnkeyMiden(
 
     return () => {
       mounted = false;
-      client?.terminate();
+      clientRef.current?.terminate();
+      clientRef.current = null;
       setClient(null);
       setAccountId(null);
     };
