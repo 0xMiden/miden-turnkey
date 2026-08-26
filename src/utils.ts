@@ -49,7 +49,7 @@ export function isValidUuid(s: string): boolean {
 }
 
 export const evmPkToCommitment = async (compressedPk: string) => {
-  const { Felt, Rpo256, FeltArray } = await import("@miden-sdk/miden-sdk");
+  const { Felt, Poseidon2, FeltArray } = await import("@miden-sdk/miden-sdk");
   const bytes = hexToBytes(compressedPk);
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
 
@@ -61,7 +61,7 @@ export const evmPkToCommitment = async (compressedPk: string) => {
   );
   // push the last 33rd byte
   felts.push(new Felt(BigInt(bytes[32])));
-  const pk = Rpo256.hashElements(new FeltArray(felts));
+  const pk = Poseidon2.hashElements(new FeltArray(felts));
   return pk;
 };
 

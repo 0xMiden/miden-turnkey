@@ -17,7 +17,7 @@
     }
   },
   "scripts": {
-    "test": "node --test tests",
+    "test": "node --test",
     "build": "rm -rf dist && node scripts/build.mjs && tsc --emitDeclarationOnly --outDir dist/types",
     "publish": "node scripts/publish.js",
     "publish:dry": "node scripts/publish.js --dry-run",
