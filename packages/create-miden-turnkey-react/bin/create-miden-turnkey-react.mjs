@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { execSync, spawn } from "child_process";
+import { spawnSync } from "child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync, cpSync } from "fs";
 import { dirname, join, resolve } from "path";
 import { fileURLToPath } from "url";
@@ -29,10 +29,7 @@ console.log(`Creating Miden Turnkey React app in ${projectPath}...`);
 // Step 1: Run npm create vite@latest with react-ts template
 console.log("\n[1/6] Creating Vite React TypeScript project...");
 try {
-  execSync(`npm create vite@latest ${projectName} -- --template react-ts`, {
-    stdio: "inherit",
-    cwd: process.cwd(),
-  });
+  runCommand("npm", ["create", "vite@latest", projectName, "--", "--template", "react-ts"], process.cwd());
 } catch (error) {
   console.error("Failed to create Vite project:", error.message);
   process.exit(1);
@@ -121,10 +118,7 @@ if (!skipInstall) {
   console.log("\n[6/6] Installing dependencies...");
   const pm = detectPackageManager();
   try {
-    execSync(`${pm} install`, {
-      stdio: "inherit",
-      cwd: projectPath,
-    });
+    runCommand(pm, ["install"], projectPath);
   } catch (error) {
     console.error("Failed to install dependencies:", error.message);
     console.log("You can install them manually with: npm install --legacy-peer-deps");
@@ -154,4 +148,21 @@ function detectPackageManager() {
   if (process.env.npm_config_user_agent?.includes("yarn")) return "yarn";
   if (process.env.npm_config_user_agent?.includes("pnpm")) return "pnpm";
   return "npm";
+}
+
+function runCommand(command, args, cwd) {
+  const executable = process.platform === "win32" ? `${command}.cmd` : command;
+  const result = spawnSync(executable, args, {
+    stdio: "inherit",
+    cwd,
+  });
+
+  if (result.error) {
+    throw result.error;
+  }
+
+  if (result.status !== 0) {
+    const reason = result.signal ? `signal ${result.signal}` : `exit code ${result.status}`;
+    throw new Error(`${command} ${args.join(" ")} failed with ${reason}`);
+  }
 }
