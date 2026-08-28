@@ -17,7 +17,7 @@ export const hexToBytes = (hex: string): Uint8Array => {
   if (hex.startsWith("0x")) {
     hex = hex.slice(2);
   }
-  if (hex.length % 2 !== 0) {
+  if (hex.length % 2 !== 0 || !/^[0-9a-fA-F]*$/.test(hex)) {
     throw new Error("Invalid hex string");
   }
   const bytes = new Uint8Array(hex.length / 2);
