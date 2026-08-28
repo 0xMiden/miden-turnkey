@@ -159,3 +159,11 @@ test('evmPkToCommitment hashes with Poseidon2 and never Rpo256', async () => {
     );
   }
 });
+
+test('hexToBytes rejects invalid hex characters', () => {
+  const { hexToBytes } = loadUtils();
+
+  assert.throws(() => hexToBytes('0xZZZZ'), /Invalid hex string/);
+  assert.throws(() => hexToBytes('0x12ZZ'), /Invalid hex string/);
+  assert.throws(() => hexToBytes('0x12 4'), /Invalid hex string/);
+});
